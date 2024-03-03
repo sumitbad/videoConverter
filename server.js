@@ -246,18 +246,17 @@ function extractProgress(stderr) {
 async function updateProgress(outputFile, progress) {
   try {
     
-
     // Update progress in MongoDB using Mongoose model
     await client.connect();
     const db = client.db(dbName);
-      let status=0
       if(progress==100){
-           status=1
+           const result=await db.collection('conversions').updateOne(
+            { output: outputFile}, 
+            { $set: { progress: progress,status:1 } }
+        );
       }
-    const result=await db.collection('conversions').updateOne(
-      { output: outputFile}, 
-      { $set: { progress: progress,status:status } }
-  );
+      return 0
+  
 } catch (err) {
     console.error(err);
 }
@@ -272,7 +271,8 @@ async function enqueueConversion(db, inputFile, outputFile) {
       await db.collection('conversions').insertOne({
           input: inputFile,
           output: outputFile,
-          status: 0
+          status: 0,
+          progress:0
       });
 
       // Convert video
