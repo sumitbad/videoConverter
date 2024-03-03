@@ -15,6 +15,7 @@
   "dependencies": {
     "chokidar": "^3.6.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.16.4",
     "express-fileupload": "^1.1.4",
     "fluent-ffmpeg": "^2.1.2",

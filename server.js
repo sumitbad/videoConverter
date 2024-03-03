@@ -3,6 +3,8 @@ const cors = require('cors')
 const multer = require('multer');
 const progress = require('progress-stream');
 const mongoose = require('mongoose');
+require('dotenv').config();
+const port=process.env.API_PORT
 
 const fs = require('fs');
 const { spawn } = require('child_process');
@@ -13,7 +15,8 @@ const MongoClient = require('mongodb').MongoClient;
 const Conversion = require('./models/conversionModel'); 
 
 // Connection URI
-const uri = 'mongodb+srv://sumitbadola573:deG6cwCI5HG39WdE@cluster0.rgz5hp1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const uri=process.env.Mongo_URI + '/?retryWrites=true&w=majority&appName=Cluster0'
+// const uri = 'mongodb+srv://sumitbadola573:deG6cwCI5HG39WdE@cluster0.rgz5hp1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 // Database Name
 const dbName = 'video_conversions';
 // Create a MongoDB client
@@ -53,12 +56,12 @@ let upload = multer({
 
 
 
-app.get('/getConversions', async (req, res) => {
-  const conversions = await Conversion.find({where:{_id:"65e31f9c6ca4ee72d46ddb7d"}});
+// app.get('/getConversions', async (req, res) => {
+//   const conversions = await Conversion.find({where:{_id:"65e31f9c6ca4ee72d46ddb7d"}});
 
-  console.log(conversions);
-  return res.send({"data":conversions});
-});
+//   console.log(conversions);
+//   return res.send({"data":conversions});
+// });
 
 // Upload Endpoint
 app.post('/upload', (req, res) => {
@@ -76,7 +79,7 @@ app.post('/upload', (req, res) => {
   const progressObj = progress({length: singleFileSize});
 
   // path to store uploaded file
-  progressObj.destination = '/Users/Admin/Downloads/react-file-upload-progress-master/uploads';
+  progressObj.destination = './uploads';
 
   // pipe file upload request with progress stream to get upload progress
   req.pipe(progressObj);
@@ -264,10 +267,10 @@ async function enqueueConversion(db, inputFile, outputFile) {
       console.error(err);
   }
 }
-
-
-
-
+//function call
 main();
 
-app.listen(5000, () => console.log('Server Started on port 5000...'));
+
+
+// listing server
+app.listen(port, () => console.log(`Server Started on port htttp://localhost:${port}`));
