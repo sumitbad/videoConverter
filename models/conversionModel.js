@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const conversionSchema = new mongoose.Schema({
     input: String,
     output: String,
+    progress:String,
     status: Number
 });
 

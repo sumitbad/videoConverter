@@ -248,13 +248,22 @@ async function updateProgress(outputFile, progress) {
     
 
     // Update progress in MongoDB using Mongoose model
-    await Conversion.updateOne({ output: outputFile }, { $set: { status: progress } });
-
-    console.log("Progress updated successfully");
+    await client.connect();
+    const db = client.db(dbName);
+      let status=0
+      if(progress==100){
+           status=1
+      }
+    const result=await db.collection('conversions').updateOne(
+      { output: outputFile}, 
+      { $set: { progress: progress,status:status } }
+  );
 } catch (err) {
     console.error(err);
 }
 }
+
+
 
 // Enqueue video conversion job
 async function enqueueConversion(db, inputFile, outputFile) {
