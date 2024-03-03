@@ -14,27 +14,34 @@ const redis = require('redis');
 const MongoClient = require('mongodb').MongoClient;
 const Conversion = require('./models/conversionModel'); 
 
-// Connection URI
-const uri=process.env.Mongo_URI + '/?retryWrites=true&w=majority&appName=Cluster0'
-// Database Name
-const dbName=process.env.DB_NAME;
-// Create a MongoDB client
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
-// Connect to MongoDB using then()
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => {
-        console.log("Connected to MongoDB mongoose");
-        // Now you can start using the Conversion model and perform database operations
-    })
-    .catch(err => {
-        console.error("Failed to connect to MongoDB:", err);
-    });
-
-
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+
+
+// Connection URI
+const uri=process.env.Mongo_URI + '/?retryWrites=true&w=majority&appName=Cluster0'
+const dbName=process.env.DB_NAME;  // Database Name
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });// Create a MongoDB client
+
+
+
+// ===================>>>>>>> Connect to MongoDB using then()<<<<<<<<<<<<<<<<<<==================
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log("Connected to MongoDB mongoose");
+  })
+  .catch(err => {
+    console.error("Failed to connect to MongoDB:", err);
+  });
+
+
+
+
+
+
+// =============>>>>>>>>>>>>> code for the conversions <<<<<<<<<================
 
 let progressPercent = 0;
 let durationInSeconds = 0;
@@ -48,10 +55,10 @@ let storage = multer.diskStorage({
   }
 });
 
-// create multer upload instance
-let upload = multer({
-  storage: storage
-}).array('file1');
+  // create multer upload instance
+  let upload = multer({
+    storage: storage
+  }).array('file1');
 
 
 
@@ -71,18 +78,18 @@ async function ensureDirectoryExists(directory) {
         }
     }
 }
+
+
+
+
+
 app.post('/upload', (req, res) => {
   
   if (req.files === null) {
     return res.status(400).json({ msg: 'No file uploaded' });
   }
-
   // read file size from req.file and replace in length below
   const singleFileSize = req.headers["content-length"];
-  
-  // NOTE:- for multi file upload,read each file size from file object and iterate over files
-
-
   const progressObj = progress({length: singleFileSize});
 
   // path to store uploaded file
@@ -110,6 +117,11 @@ app.post('/upload', (req, res) => {
   });
 
 });
+
+
+
+
+
 
 // get request for SSE to get upload progress
 app.get('/upload', (req, res) => {
@@ -145,6 +157,8 @@ app.get('/upload', (req, res) => {
 });
 
 
+// ========>>>>>>main function defination <<<<<============
+
 async function main() {
   try {
       await client.connect();
@@ -171,6 +185,8 @@ async function main() {
       console.error(err);
   }
 }
+
+
 
 // Function to get video duration using FFprobe
 function getVideoDuration(inputFile) {
@@ -200,6 +216,8 @@ function getVideoDuration(inputFile) {
       });
   });
 }
+
+
 
 // Function to convert video
 async function convertVideo(inputFile, outputFile) {
@@ -274,7 +292,7 @@ async function enqueueConversion(db, inputFile, outputFile) {
           status: 0,
           progress:0
       });
-
+      
       // Convert video
       await convertVideo(inputFile, outputFile);
 
@@ -289,5 +307,8 @@ main();
 
 
 
-// listing server
-app.listen(port, () => console.log(`Server Started on port htttp://localhost:${port}`));
+
+// ======>>>> listing server<<<<=======
+app.listen(port, () => {
+  console.log(`Server Started on port htttp://localhost:${port}`)
+});
