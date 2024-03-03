@@ -56,14 +56,22 @@ let upload = multer({
 
 
 
-// app.get('/getConversions', async (req, res) => {
-//   const conversions = await Conversion.find({where:{_id:"65e31f9c6ca4ee72d46ddb7d"}});
+const util = require('util');
+const fsPromises = fs.promises;
 
-//   console.log(conversions);
-//   return res.send({"data":conversions});
-// });
-
-// Upload Endpoint
+// Function to check if a directory exists, if not, create it
+async function ensureDirectoryExists(directory) {
+    try {
+        await fsPromises.access(directory, fs.constants.F_OK);
+    } catch (err) {
+        if (err.code === 'ENOENT') {
+            // Directory doesn't exist, create it
+            await fsPromises.mkdir(directory, { recursive: true });
+        } else {
+            throw err;
+        }
+    }
+}
 app.post('/upload', (req, res) => {
   
   if (req.files === null) {
@@ -147,12 +155,14 @@ async function main() {
 
       // Watch a directory for new files
       const watchDirectory = './uploads';
-      fs.watch(watchDirectory, (eventType, filename) => {
+      await ensureDirectoryExists(watchDirectory);
+      fs.watch(watchDirectory, async(eventType, filename) => {
         console.log("changed");
           if (eventType === 'rename') {
               // New file added to the directory
               const inputFile = `${watchDirectory}/${filename}`;
               console.log("detecte getting new>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+              await ensureDirectoryExists("./output_videos");
               const outputFile = `./output_videos/${filename.replace(/\.[^/.]+$/, '')}.mp4`; // Assuming output directory is 'output_videos'
 
               // Enqueue conversion job
