@@ -161,9 +161,8 @@ async function main() {
           if (eventType === 'rename') {
               // New file added to the directory
               const inputFile = `${watchDirectory}/${filename}`;
-              console.log("detecte getting new>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
               await ensureDirectoryExists("./output_videos");
-              const outputFile = `./output_videos/${filename.replace(/\.[^/.]+$/, '')}.mp4`; // Assuming output directory is 'output_videos'
+              const outputFile = `./output_videos/${filename.replace(/\.[^/.]+$/, '')}.mp4`; 
 
               // Enqueue conversion job
               enqueueConversion(db, inputFile, outputFile);
