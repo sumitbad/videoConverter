@@ -16,9 +16,8 @@ const Conversion = require('./models/conversionModel');
 
 // Connection URI
 const uri=process.env.Mongo_URI + '/?retryWrites=true&w=majority&appName=Cluster0'
-// const uri = 'mongodb+srv://sumitbadola573:deG6cwCI5HG39WdE@cluster0.rgz5hp1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 // Database Name
-const dbName = 'video_conversions';
+const dbName=process.env.DB_NAME;
 // Create a MongoDB client
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
