@@ -231,7 +231,9 @@ async function convertVideo(inputFile, outputFile) {
           const progress = extractProgress(data.toString());
           console.log(`Progress: ${progress}%`);
           // Update progress in the database
-          updateProgress(outputFile, progress);
+            if(progress==100){
+              updateProgress(outputFile, progress);
+            }
       });
 
       ffmpeg.on('close', code => {
@@ -267,12 +269,11 @@ async function updateProgress(outputFile, progress) {
     // Update progress in MongoDB using Mongoose model
     await client.connect();
     const db = client.db(dbName);
-      if(progress==100){
            const result=await db.collection('conversions').updateOne(
             { output: outputFile}, 
             { $set: { progress: progress,status:1 } }
         );
-      }
+      
       return 0
   
 } catch (err) {
@@ -292,7 +293,7 @@ async function enqueueConversion(db, inputFile, outputFile) {
           status: 0,
           progress:0
       });
-      
+
       // Convert video
       await convertVideo(inputFile, outputFile);
 
