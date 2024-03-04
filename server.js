@@ -90,6 +90,7 @@ app.post('/upload', (req, res) => {
   }
   // read file size from req.file and replace in length below
   const singleFileSize = req.headers["content-length"];
+  console.log("this is single fidle===============>>",singleFileSize)
   const progressObj = progress({length: singleFileSize});
 
   // path to store uploaded file

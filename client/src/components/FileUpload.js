@@ -4,26 +4,41 @@ import Progress from './Progress';
 import axios from 'axios';
 
 const FileUpload = () => {
-  const [file, setFile] = useState('');
+  const [file, setFile] = useState([]);
   const [filename, setFilename] = useState('Choose File');
   const [message, setMessage] = useState('');
   const [uploadPercentage, setUploadPercentage] = useState(0);
-  const [files, setFiles] = useState([]);
+  const [dataFiles, setDataFiles] = useState([]);
 
 
   const onChange = e => {
-    setFile(e.target.files[0]);
-    setFilename(e.target.files[0].name);
+    console.log(e.target.files);
+    const mfil = Array.from(e.target.files);
+
+    setFile(mfil);
+    const names =mfil.length +  " files selected.";
+
+    setFilename(names);
   };
 
   const onSubmit = async e => {
     e.preventDefault();
+   // setDataFiles(file);
+
+    file.forEach((datafile)=>{
+      uploadOneByOne(datafile);
+    })
+  }
+
+
+  const uploadOneByOne = async dataFile => {
+
     const formData = new FormData();
     
     // append file in 'file1' which is used in backend multer config
-    formData.append('file1', file);
+    formData.append('file1', dataFile);
     //setFiles(files.push(file));
-    setFiles([...files, file]);
+    
     try {
       // send an asynchrnous post request for file upload
       axios.post('http://localhost:5000/upload', formData, {
@@ -74,6 +89,7 @@ const FileUpload = () => {
             type='file'
             className='custom-file-input'
             id='customFile'
+            multiple
             onChange={onChange}
           />
           <label className='custom-file-label' htmlFor='customFile'>
@@ -90,7 +106,7 @@ const FileUpload = () => {
         />
       </form>
 
-      {files.map((item, index) => (
+      {file.map((item, index) => (
         <>
           <div className='main-progress-wrapper'>
           <h3>{item.name}</h3>

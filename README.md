@@ -11,8 +11,9 @@ cd client
 npm install
 
 # Serve on localhost:3000
-npm run dev
 
+#backEnd  server
+npm i
+npm run server
 ```
 
-## This project is cloned from [react-file-uploader](https://github.com/bradtraversy/react_file_uploader) and modified to add upload progress
