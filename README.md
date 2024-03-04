@@ -16,4 +16,4 @@ npm install
 npm i
 npm run server
 ```
-
+#TECHSTACK--->> REACT,EXPRESS JS,NODE JS,MONGO DB,RADIUS QUEUE,CRON JON

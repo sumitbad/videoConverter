@@ -4,6 +4,8 @@ const multer = require('multer');
 const progress = require('progress-stream');
 const mongoose = require('mongoose');
 require('dotenv').config();
+const cron = require('node-cron');
+
 const port=process.env.API_PORT
 
 const fs = require('fs');
@@ -292,7 +294,8 @@ async function enqueueConversion(db, inputFile, outputFile) {
           input: inputFile,
           output: outputFile,
           status: 0,
-          progress:0
+          progress:0,
+          checked:0
       });
 
       // Convert video
@@ -306,6 +309,32 @@ async function enqueueConversion(db, inputFile, outputFile) {
 }
 //function call
 main();
+
+
+
+
+//adding 5 min of cron if al video sucessfully converted it will  thrugh a message
+cron.schedule('*/5 * * * *', async () => {
+  try {
+    // Assuming `client.connect();` has been called once at the start of your script
+    const db = client.db(dbName);
+    const data = await db.collection('conversions').findOne({ progress: 100, checked: 0 });
+    console.log("===>>>>  Cron job checking for videos converted 100 percent every 5 minutes <====");
+
+    if (data && data.output) { // Combined check for data existence and output
+      console.log("==>> Your file has been converted to MP4 format: ", data.output);
+      const result = await db.collection('conversions').updateOne(
+        { _id: data._id },
+        { $set: { checked: 1 } }
+      );
+      if(result.modifiedCount === 1) {
+        console.log("Document updated successfully.");
+      }
+    }
+  } catch (err) {
+    console.error("Error during cron job execution:", err);
+  }
+});
 
 
 

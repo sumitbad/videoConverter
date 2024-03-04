@@ -5,7 +5,8 @@ const conversionSchema = new mongoose.Schema({
     input: String,
     output: String,
     progress:String,
-    status: Number
+    status: Number,
+    checked:Boolean
 });
 
 // Create model for video conversions
